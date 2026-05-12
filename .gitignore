@@ -1,0 +1,6 @@
+kitt.db
+kitt.db.backup
+*.pyc
+__pycache__/
+.env
+.DS_Store
