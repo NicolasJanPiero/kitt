@@ -2,16 +2,20 @@
 
 ## Was ist KITT?
 
-Persoenlicher KI-Assistent. Lokal-first, SQLite, Hybrid-LLM, ~2.400 Zeilen Python.
+Persoenlicher KI-Assistent. Lokal-first, SQLite, Hybrid-LLM, ~1.200 Zeilen Python.
 
 ## Repo-Struktur
 
 ```
 kitt.py              — Entry Point
-config.py            — Konstanten, API Keys, Pfade
+config.py            — Konstanten, API Keys, Pfade, Keywords
 database.py          — SQLite Connection, Schema-Init
 llm.py               — Hybrid-LLM-Routing (lokal/API/Bridge)
-agent.py             — Hauptloop, Befehle, Signal-Loop
+agent.py             — Hauptloop, Session-Mgmt, LLM-Routing (~160 Zeilen)
+commands.py          — Alle Terminal-Befehle (~180 Zeilen)
+helpers.py           — Parsing, Prompts, Klassifizierung (~130 Zeilen)
+terminal.py          — Heartbeat-UI (~60 Zeilen)
+signal_loop.py       — Signal-Modus (~140 Zeilen)
 memory.py            — Langzeitgedaechtnis
 knowledge.py         — Knowledge Graph
 projects.py          — Projekt-CRUD
@@ -28,7 +32,7 @@ signal_channel.py    — Signal E2EE Channel
 simai_bridge.py      — A2A Bridge zu sim.ai
 heartbeat.py         — Reactive Heartbeat
 schema.sql           — DB-Schema (12 Tabellen)
-seed.sql             — Initiale Daten + 60 Skills
+seed.sql             — Allgemeine Defaults + 60 Skills (KEINE persoenlichen Daten)
 ```
 
 ## DB-Schema
@@ -37,24 +41,24 @@ seed.sql             — Initiale Daten + 60 Skills
 
 ## Coding-Regeln
 
-- Jede Datei < 200 Zeilen (Ausnahme: agent.py als Hauptloop)
+- Jede Datei < 200 Zeilen
 - Keine Dependencies ausser requests
 - Deutsche Kommentare
 - Alle DB-Ops mit try/except
 - Logging in logs-Tabelle + Textfile
-- Datenklassifizierung: personal→lokal, work→API, customer→Bridge
+- Datenklassifizierung: personal->lokal, work->API, customer->Bridge
+- seed.sql: NUR allgemeine Defaults, keine persoenlichen Daten
+
+## Multi-User
+
+- Beim ersten Start: DB wird aus schema.sql + seed.sql erstellt
+- Onboarding startet automatisch (onboarding_complete='false')
+- User gibt Name, Job, Projekte, Habits ein
+- Alles in lokaler kitt.db gespeichert
+- Kein hardcodierter Username im Code
 
 ## Bekannte Limitierungen
 
 - Ollama auf CPU ist langsam (~24s pro Antwort)
 - signal-cli startet JVM bei jedem Poll
-- Kein Outlook-Calendar-Tool in sim.ai (lokal via icalBuddy)
 - Skills werden per Keyword gematcht (kein semantisches Matching)
-
-## Naechste Features
-
-- Desktop-App (Electron oder Swift)
-- A2A-Protokoll statt HTTP-Bridge
-- Multi-User Support
-- Docker-Container fuer VPS-Deployment
-- Semantisches Skill-Matching

@@ -5,7 +5,7 @@ import json
 import os
 from sandbox import log_action
 
-SIGNAL_NUMBER = "+491637760077"
+SIGNAL_NUMBER = os.environ.get("KITT_SIGNAL_NUMBER", "")
 SIGNAL_CLI = "signal-cli"
 JAVA_PATH = "/usr/local/opt/openjdk/bin"
 
@@ -40,8 +40,8 @@ def receive_messages():
     """Holt neue Nachrichten. Gibt Liste von Strings zurück."""
     try:
         result = subprocess.run(
-            [SIGNAL_CLI, "-a", SIGNAL_NUMBER, "receive",
-             "--timeout", "1", "--json"],
+            [SIGNAL_CLI, "-a", SIGNAL_NUMBER, "--output=json",
+             "receive", "--timeout", "1"],
             capture_output=True, text=True, timeout=10, env=_env()
         )
     except subprocess.TimeoutExpired:
@@ -54,15 +54,23 @@ def receive_messages():
         try:
             data = json.loads(line)
             envelope = data.get("envelope", {})
-            msg = envelope.get("dataMessage", {})
-            text = msg.get("message", "")
-            sender = envelope.get("source", "")
-            # Nur Nachrichten von Nico, keine eigenen Sync-Messages
-            if text and sender == SIGNAL_NUMBER:
+            text = None
+
+            # Direkte Nachricht
+            dm = envelope.get("dataMessage")
+            if dm and dm.get("message"):
+                text = dm["message"]
+
+            # Sync-Message (wenn man sich selbst schreibt)
+            sync = envelope.get("syncMessage", {}).get("sentMessage")
+            if not text and sync and sync.get("message"):
+                text = sync["message"]
+
+            if text:
                 messages.append(text)
         except json.JSONDecodeError:
             continue
 
     if messages:
-        log_action("SIGNAL_RECV", str(len(messages)) + " Nachrichten")
+        log_action("SIGNAL_RECV", str(len(messages)) + " msg: " + messages[0][:50])
     return messages

@@ -1,5 +1,8 @@
 kitt.db
 kitt.db.backup
+kitt.db.nico-backup
+kitt.db-shm
+kitt.db-wal
 *.pyc
 __pycache__/
 .env

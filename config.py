@@ -19,7 +19,13 @@ ANTHROPIC_MODEL = "claude-sonnet-4-20250514"
 SIMAI_WEBHOOK_URL = os.environ.get("SIMAI_WEBHOOK_URL", "")
 SIMAI_API_KEY = os.environ.get("SIMAI_API_KEY", "")
 
-# Routing-Keywords die an sim.ai gehen
+# Datenklassifizierung fuer LLM-Routing
+PERSONAL_KEYWORDS = [
+    "training", "gym", "sport", "schlaf", "gesundheit", "ernaehrung",
+    "meditation", "gewohnheit", "habit", "wasser", "feierabend",
+    "muede", "energie", "stimmung", "mood"
+]
+
 SIMAI_KEYWORDS = [
     "email", "e-mail", "mail", "outlook",
     "linkedin", "content",

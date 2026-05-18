@@ -57,16 +57,9 @@ den Tag zu strukturieren, produktiv zu bleiben und gesund zu leben.
 
 </kitt-personality>');
 
--- Nicos Projekte
-INSERT OR IGNORE INTO projects (name, description, priority, tags, next_action) VALUES
-    ('diegovernance.de', 'ISO 42001 Plattform fuer KMUs', 9, 'governance,iso,saas', 'Audit-Report Builder fertigstellen'),
-    ('KITT', 'Persoenlicher Desktop-Agent, Open Source', 8, 'agent,ki,opensource', 'Tag 1 Foundation abschliessen'),
-    ('sim.ai-claw', 'Modulares Agent-System auf sim.ai', 7, 'agent,simai,kauz', 'Mother v5 stabilisieren'),
-    ('kauz.ai', 'Firma — AI Consulting, Workflows, Chatbots', 7, 'firma,consulting', 'Kundenakquise Q2'),
-    ('OMR Scraper', 'Lead-Enrichment fuer OMR26', 5, 'leads,scraper,omr', 'E-Mail-Validierung abschliessen'),
-    ('Email Triage', 'ISO-konforme E-Mail-Verarbeitung mit HITL', 6, 'email,governance,hitl', 'HITL-System deployen');
+-- Projekte werden ueber das Onboarding erstellt (keine hardcodierten Daten)
 
--- Heartbeat-Regeln
+-- Heartbeat-Regeln (allgemein, fuer alle User)
 INSERT OR IGNORE INTO heartbeat_rules (name, schedule, time_of_day, category, action_type, action_data, description) VALUES
     ('Kalender checken', 'weekday', '08:00', 'arbeit', 'command', 'kalender', 'Outlook-Termine fuer heute'),
     ('Tagesliste', 'weekday', '08:00', 'planung', 'query', 'Erstelle Tagesplan aus Terminen, Tasks und Habits', 'Tagesstruktur vorschlagen'),
