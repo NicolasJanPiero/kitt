@@ -185,21 +185,12 @@ def _session_4():
     deferred = _ask("\n4. Wie soll ich reagieren wenn du einen Task seit 3 Tagen verschiebst?")
     review = _ask("\n5. Soll ich einen Wochenrueckblick machen? Wenn ja, welcher Tag?")
 
-    # Preferences speichern
-    prefs = []
-    if stil:
-        prefs.append("Kommunikationsstil: " + stil)
-    if duzen:
-        prefs.append("Anrede: " + duzen)
-    if vorschlaege:
-        prefs.append("Proaktive Vorschlaege: " + vorschlaege)
-    if deferred:
-        prefs.append("Bei verschobenen Tasks: " + deferred)
-    if review:
-        prefs.append("Wochenrueckblick: " + review)
-
-    for p in prefs:
-        save_memory("preference", p, source="onboarding", tags="kommunikation", importance=8)
+    for label, val in [("Kommunikationsstil", stil), ("Anrede", duzen),
+                        ("Proaktive Vorschlaege", vorschlaege),
+                        ("Bei verschobenen Tasks", deferred), ("Wochenrueckblick", review)]:
+        if val:
+            save_memory("preference", label + ": " + val, source="onboarding",
+                        tags="kommunikation", importance=8)
 
     _set_soul("onboarding_complete", "true")
     print("\nOnboarding abgeschlossen. Ich kenne dich jetzt. Sag mir was ansteht.\n")

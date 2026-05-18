@@ -24,6 +24,7 @@ def show_help():
     print("  stats                   -- Fortschritt")
     print("  merk dir: <fakt>        -- Fakt speichern")
     print("  was weisst du ueber X   -- Memory durchsuchen")
+    print("  kalender                -- Heutige Termine")
     print("  skills                  -- Verfuegbare Skills")
     print("  heartbeat               -- Heartbeat-Vorschlaege")
     print("  bridge status           -- sim.ai Verbindung")

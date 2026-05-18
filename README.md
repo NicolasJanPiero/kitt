@@ -1,110 +1,158 @@
 # KITT — Kauz Intelligent Task Tracker
 
-Ein persoenlicher KI-Assistent der lokal auf deinem Rechner laeuft.
-Organisiert Arbeit, trackt Gewohnheiten, plant deinen Tag — und den du in einer Stunde lesen kannst.
+Dein persoenlicher KI-Assistent. Lokal, auditierbar, governance-konform.
 
-~2.400 Zeilen Python. 1 Dependency. 0 CVEs.
+~1.200 Zeilen Python. 1 Dependency. 0 CVEs.
 
-## Warum nicht OpenClaw / Hermes / n8n-claw?
+## Was ist KITT?
 
-| Feature | OpenClaw | Hermes | KITT |
-|---------|----------|--------|------|
-| Codebase | 500.000+ | 50.000+ | ~2.400 |
-| Auditierbar | Nein | Schwer | Ja, in 1h |
-| CVEs | 60+ | ? | 0 |
-| Lokal-first | Nein | Optional | Ja |
-| Life Management | Nein | Nein | Ja |
-| Habit Tracking | Nein | Nein | Ja |
-| Coaching | Nein | Nein | Ja |
-| Dependencies | Hunderte | Dutzende | 1 |
+Ein KI-Assistent der lokal auf deinem Rechner laeuft, deine Projekte kennt,
+deinen Tag strukturiert, deine Gewohnheiten trackt und dich coacht.
+
+Nicht nur ein Arbeitsassistent — ein persoenliches Betriebssystem fuer
+Produktivitaet, Gesundheit und Planung.
 
 ## Quick Start
 
 ```bash
-git clone https://github.com/nicobaar/kitt.git
+git clone https://github.com/NicolasJanPiero/kitt.git
 cd kitt
 pip install -r requirements.txt
 ollama pull llama3.2:3b
 python3 kitt.py
 ```
 
-KITT startet das Onboarding automatisch. Keine Config-Files, keine ENV-Vars, keine DB-Setup.
+KITT fuehrt dich durch ein kurzes Onboarding. Danach ist er einsatzbereit.
 
 ## Features
 
-- **Tagesplanung** — Kalender + Tasks + Habits zu einem Tagesplan
-- **Projekteverwaltung** — Projekte, Next Actions, Notizen
-- **Task-Management** — Prioritaeten, Faelligkeit, Kategorien
-- **Habit-Tracking** — Gewohnheiten, Streaks, Fortschrittsbalken
-- **Coaching** — Pattern-Erkennung, Nudges, Beobachtungen
-- **60 Skills** — Promptbibliothek fuer Analyse, Strategie, Marketing, Coaching
-- **Signal-Channel** — E2EE Messaging, Morgen-Heartbeat
-- **sim.ai-Bridge** — A2A zu Cloud-Workflows (Email, CRM, LinkedIn)
-- **Knowledge Graph** — Personen, Firmen, Projekte verknuepft
-- **Onboarding** — 4-Session Kennenlern-Flow
-- **Hybrid-LLM** — Lokal (Ollama) fuer Privates, API fuer Arbeit
-- **Audit Trail** — Jede Aktion in SQLite geloggt
+- Lokal first: Ollama + SQLite, kein Cloud-Zwang
+- Hybrid-LLM: Sensible Daten lokal, Qualitaet ueber API, Kundendaten ueber Bridge
+- Signal: E2EE-Steuerung vom Handy
+- Projektmanagement: Projekte, Tasks, Next Actions
+- Habit Tracking: Gewohnheiten tracken und Streaks sehen
+- Tagesplanung: Kalender + Tasks + Habits = strukturierter Tag
+- Coaching: Pattern-Erkennung, Motivations-Nudges
+- Reviews: Tages- und Wochenrueckblick mit Statistiken
+- Skills: 60 professionelle Prompts als aktives Wissen
+- Bridge: Optional an Cloud-Workflows anbindbar (sim.ai, n8n, etc.)
+- Reactive Mode: Bestaetigung vor jeder Aktion
+- Audit Trail: Jede Aktion geloggt mit Datenklasse
+- ISO 42001 / DSGVO ready
+
+## Warum nicht OpenClaw?
+
+| | OpenClaw | KITT |
+|---|---|---|
+| Codebase | 500.000+ Zeilen | ~1.200 Zeilen |
+| CVEs | 60+ bekannt | 0 (lies den Code selbst) |
+| Dependencies | Hunderte | 1 (requests) |
+| Datenbank | Supabase Cloud | SQLite lokal |
+| Modell | Cloud-API only | Hybrid (lokal/API/Bridge) |
+| Life Management | Nein | Ja |
+| Coaching | Nein | Ja |
+| Audit Trail | Nein | Ja, mit Datenklasse |
 
 ## Architektur
 
 ```
-Signal / Terminal
-       |
-   KITT Core (lokal)
-   |-- Ollama (llama3.2:3b, privat)
-   |-- Claude API (Arbeit, Skills)
-   |-- kitt.db (SQLite)
-   |   |-- soul, memory, projects
-   |   |-- tasks, habits, skills
-   |   |-- kg_entities, sessions, logs
-   |-- Module:
-   |   |-- planner, review, coach
-   |   |-- onboarding, knowledge, skills
-   |   |-- calendar, sandbox, bridge
-   |
-   +-- sim.ai-claw (Cloud, optional)
-       |-- Email Agent
-       |-- Research Agent
-       |-- CRM Agent
+Du (Signal / Terminal)
+    |
+    v
+KITT (lokal)
+|-- Ollama (persoenliche Daten, lokal)
+|-- Claude API (Arbeit/Coaching, optional)
+|-- SQLite (Memory, Projekte, Tasks, Habits)
++-- Bridge -> sim.ai / n8n (Kundendaten, optional)
 ```
 
 ## Befehle
 
 | Befehl | Was |
 |--------|-----|
+| `kalender` | Heutige Termine |
+| `plan` | Tagesplan vorschlagen |
+| `wochenplan` | Wochenplan vorschlagen |
 | `projekte` | Alle Projekte |
-| `tasks` | Offene Tasks |
-| `neuer task: X` | Task erstellen |
-| `erledigt X` | Task abschliessen |
-| `plan` | Tagesplan |
-| `review` | Tagesrueckblick |
-| `habits` | Habits mit Stats |
+| `projekt <name>` | Projekt-Details |
+| `neues projekt: <name>` | Projekt erstellen |
+| `tasks` | Offene Aufgaben |
+| `neuer task: <titel>` | Task erstellen |
+| `erledigt <titel>` | Task abschliessen |
+| `habits` | Gewohnheiten mit Stats |
 | `training gemacht` | Habit loggen |
 | `stats` | Fortschritt |
-| `skills` | Verfuegbare Skills |
-| `merk dir: X` | Fakt speichern |
+| `review` | Tagesrueckblick |
+| `wochenrueckblick` | Wochenrueckblick |
+| `merk dir: <fakt>` | Fakt speichern |
 | `was weisst du ueber X` | Memory durchsuchen |
+| `skills` | Verfuegbare Skills |
+| `heartbeat` | Heartbeat-Vorschlaege |
+| `bridge status` | sim.ai Verbindung pruefen |
+| `log` | Letzte 20 Aktionen |
+| `help` | Alle Befehle |
 
 ## Datenklassifizierung (ISO 42001)
 
 | Datenklasse | Verarbeitung | Begruendung |
 |-------------|-------------|-------------|
 | Persoenlich (Habits, Schlaf) | Ollama lokal | Gesundheitsdaten nie in der Cloud |
-| Arbeit (Tasks, Projekte) | Claude API | Keine Kundendaten |
-| Kundendaten (Email, CRM) | sim.ai Bridge | Guardrails, PII-Filter |
+| Arbeit (Tasks, Projekte) | Claude API | Keine PII, beste Qualitaet |
+| Kundendaten (Email, CRM) | sim.ai Bridge | Guardrails, PII-Filter, Audit |
 
 ## Signal-Modus
 
 ```bash
+export KITT_SIGNAL_NUMBER="+49..."
 python3 kitt.py --signal
 ```
 
 Laeuft als Daemon, pollt Signal-Nachrichten, antwortet automatisch.
 Morgen-Heartbeat mit Tagesplan. E2EE by default.
 
-## Ohne sim.ai (Pure Local)
+## Konfiguration
 
-KITT funktioniert komplett ohne Cloud. Dann fehlen Email/CRM/LinkedIn — aber Kalender, Tasks, Projekte, Habits, Coaching funktionieren.
+Optionale Environment-Variablen:
+
+```
+ANTHROPIC_API_KEY     — fuer Claude API (bessere Qualitaet)
+SIMAI_WEBHOOK_URL     — fuer sim.ai Bridge
+SIMAI_API_KEY         — fuer Bridge-Authentifizierung
+KITT_SIGNAL_NUMBER    — fuer Signal-Modus
+```
+
+Ohne diese laeuft KITT komplett lokal mit Ollama.
+
+## Modulstruktur
+
+```
+kitt.py              — Entry Point
+config.py            — Konstanten, Pfade, Keywords
+database.py          — SQLite Connection, Schema-Init
+llm.py               — Hybrid-LLM-Routing (lokal/API)
+agent.py             — Hauptloop, Session-Management
+commands.py          — Alle Befehls-Handler
+helpers.py           — Parsing, Prompts, Klassifizierung
+terminal.py          — Heartbeat-UI
+signal_loop.py       — Signal-Modus
+memory.py            — Langzeitgedaechtnis
+knowledge.py         — Knowledge Graph
+projects.py          — Projekt-CRUD
+tasks.py             — Task-Management
+habits.py            — Habit-Tracking
+planner.py           — Tages-/Wochenplanung
+review.py            — Tages-/Wochenrueckblick
+coach.py             — Nudges, Pattern-Erkennung
+skills.py            — Skill-Registry (60 Prompts)
+onboarding.py        — 4-Session Kennenlern-Flow
+calendar_tool.py     — macOS Kalender (icalBuddy)
+sandbox.py           — Shell-Execution, Blocklist
+simai_bridge.py      — A2A Bridge zu sim.ai
+heartbeat.py         — Reactive Heartbeat
+signal_channel.py    — Signal E2EE Channel
+schema.sql           — DB-Schema (12 Tabellen)
+seed.sql             — Defaults + 60 Skills
+```
 
 ## Lizenz
 
@@ -112,6 +160,5 @@ MIT
 
 ## Credits
 
-- Architektur inspiriert von [n8n-claw](https://github.com/freddy-schuetz/n8n-claw) von Friedemann Schuetz
 - Gebaut mit [Claude Code](https://claude.ai/claude-code) von Anthropic
 - Entwickelt von [kauz.ai](https://kauz.ai)

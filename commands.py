@@ -10,7 +10,7 @@ from review import generate_day_review, generate_week_review
 from habits import list_habits, find_habit, log_habit, get_habit_stats, get_today_habits
 from skills import list_skills
 from simai_bridge import check_bridge_status
-from heartbeat import show_heartbeat
+from heartbeat import show_heartbeat, fetch_calendar_local, parse_icalbuddy_output
 from sandbox import log_action
 from helpers import show_help, show_log
 from terminal import handle_heartbeat_choice
@@ -34,6 +34,20 @@ def handle_command(user_input, lower, session_id):
         return True
     if lower == "bridge status":
         print(check_bridge_status())
+        return True
+    if lower in ("kalender", "termine"):
+        raw = fetch_calendar_local()
+        events = parse_icalbuddy_output(raw)
+        if events:
+            print("\nTermine heute:")
+            for e in events:
+                line = "  " + e["time"] + "  " + e["subject"]
+                if e["attendees"]:
+                    line += " (" + e["attendees"] + ")"
+                print(line)
+            print("  " + str(len(events)) + " Termine\n")
+        else:
+            print("Keine Termine heute.\n")
         return True
 
     # Memory
