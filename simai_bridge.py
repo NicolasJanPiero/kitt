@@ -32,7 +32,7 @@ def delegate_to_simai(task, context=""):
     payload = {
         "task": task,
         "context": context,
-        "source": "kitt",
+        "source": "kauz-desktop-agent",
         "timestamp": datetime.now().isoformat(),
         "version": "1.0"
     }
